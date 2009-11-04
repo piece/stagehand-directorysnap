@@ -85,7 +85,7 @@ class Stagehand_DirectoryRebirth
     public function memorize($path)
     {
         $this->path = $path;
-        $this->directory = $this->memorizeDirectory($path, $this->directory);
+        $this->directory = $this->memorizeDirectory($path);
     }
 
     // }}}
@@ -99,15 +99,7 @@ class Stagehand_DirectoryRebirth
         $cleaner = new Stagehand_DirectoryCleaner();
         $cleaner->clean($this->path);
         
-        foreach ($this->directory as $key => $value) {
-            $path = $this->path . '/' . $key;
-
-            if (is_array($value)) {
-                mkdir($path);
-            } else {
-                file_put_contents($path, $value);
-            }
-        }
+        $this->reproduceDirectory($this->path, $this->directory);
     }
 
     /**#@-*/
@@ -116,11 +108,15 @@ class Stagehand_DirectoryRebirth
      * @access protected
      */
 
+    // }}}
+    // {{{ memorizeDirectory
+
     /**
      * @param string $path
-     * @param string $directory
+     * @param array  $directory
+     * @return array
      */
-    protected function memorizeDirectory($path, $directory)
+    protected function memorizeDirectory($path, $directory = array())
     {
         foreach (new DirectoryIterator($path) as $fileInfo) {
             if ($fileInfo->isDot()) {
@@ -129,7 +125,7 @@ class Stagehand_DirectoryRebirth
 
             $name = $fileInfo->getFilename();
             if ($fileInfo->isDir()) {
-                $directory[$name] = array();
+                $directory[$name] = $this->memorizeDirectory($fileInfo->getPathname());
             } elseif ($fileInfo->isFile()) {
                 $directory[$name] = file_get_contents($fileInfo->getPathname());
             }
@@ -137,6 +133,28 @@ class Stagehand_DirectoryRebirth
 
         return $directory;
     }
+
+    // }}}
+    // {{{ reproduceDirectory
+
+    /**
+     * @param string $path
+     * @param array  $directory
+     */
+    protected function reproduceDirectory($path, $directory)
+    {
+        foreach ($directory as $name => $value) {
+            $targetPath = $path . '/' . $name;
+
+            if (is_array($value)) {
+                mkdir($targetPath);
+                $this->reproduceDirectory($targetPath, $value);
+            } else {
+                file_put_contents($targetPath, $value);
+            }
+        }
+    }
+
 
     /**#@-*/
 

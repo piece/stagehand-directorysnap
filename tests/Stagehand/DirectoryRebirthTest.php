@@ -78,30 +78,35 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->directory = dirname(__FILE__) . '/DirectoryRebirthTest';
+
+        if (file_exists($this->directory)) {
+            $cleaner = new Stagehand_DirectoryCleaner();
+            $cleaner->clean($this->directory);
+            rmdir($this->directory);
+        }
+
         mkdir($this->directory);
 
         touch($this->directory . '/example.txt');
         file_put_contents($this->directory . '/example.txt', 'example');
 
         mkdir($this->directory . '/path');
-        mkdir($this->directory . '/path/to');
         touch($this->directory . '/path/foo.txt');
         touch($this->directory . '/path/bar.txt');
+        file_put_contents($this->directory . '/path/foo.txt', 'foo file');
+        file_put_contents($this->directory . '/path/bar.txt', 'bar file');
+
+        mkdir($this->directory . '/path/to');
         touch($this->directory . '/path/to/baz.txt');
+        file_put_contents($this->directory . '/path/to/baz.txt', 'baz file');
     }
 
-    public function tearDown()
-    {
-        $cleaner = new Stagehand_DirectoryCleaner();
-        $cleaner->clean($this->directory);
-
-        @rmdir($this->directory);
-    }
+    public function tearDown() { }
 
     /**
      * @test
      */
-    public function rebirth()
+    public function memorizeAndReproduceDirectory()
     {
         $rebirth = new Stagehand_DirectoryRebirth();
         $rebirth->memorize($this->directory);
@@ -111,10 +116,10 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
 
         $this->assertFileNotExists($this->directory . '/example.txt');
         $this->assertFileNotExists($this->directory . '/path');
-        /* $this->assertFileNotExists($this->directory . '/path/foo.txt'); */
-        /* $this->assertFileNotExists($this->directory . '/path/bar.txt'); */
-        /* $this->assertFileNotExists($this->directory . '/path/to'); */
-        /* $this->assertFileNotExists($this->directory . '/path/to/baz.txt'); */
+        $this->assertFileNotExists($this->directory . '/path/foo.txt');
+        $this->assertFileNotExists($this->directory . '/path/bar.txt');
+        $this->assertFileNotExists($this->directory . '/path/to');
+        $this->assertFileNotExists($this->directory . '/path/to/baz.txt');
 
         $rebirth->reproduce();
 
@@ -125,10 +130,22 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
 
         $this->assertFileExists($this->directory . '/path');
         $this->assertTrue(is_dir($this->directory . '/path'));
-        /* $this->assertFileExists($this->directory . '/path/foo.txt'); */
-        /* $this->assertFileExists($this->directory . '/path/bar.txt'); */
-        /* $this->assertFileExists($this->directory . '/path/to'); */
-        /* $this->assertFileExists($this->directory . '/path/to/baz.txt'); */
+        $this->assertFileExists($this->directory . '/path/foo.txt');
+        $this->assertFileExists($this->directory . '/path/bar.txt');
+        $this->assertEquals(file_get_contents($this->directory . '/path/foo.txt'),
+                            'foo file'
+                            );
+        $this->assertEquals(file_get_contents($this->directory . '/path/bar.txt'),
+                            'bar file'
+                            );
+
+        $this->assertFileExists($this->directory . '/path/to');
+        $this->assertTrue(is_dir($this->directory . '/path/to'));
+
+        $this->assertFileExists($this->directory . '/path/to/baz.txt');
+        $this->assertEquals(file_get_contents($this->directory . '/path/to/baz.txt'),
+                            'baz file'
+                            );
     }
 
     /**#@-*/
