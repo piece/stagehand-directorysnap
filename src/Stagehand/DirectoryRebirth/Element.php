@@ -35,10 +35,10 @@
  * @since      File available since Release 0.1.0
  */
 
-// {{{ Stagehand_DirectoryRebirth
+// {{{ Stagehand_DirectoryRebirth_Element
 
 /**
- * Stagehand_DirectoryRebirth
+ * A element for Stagehand_DirectoryRebirth.
  *
  * @package    Stagehand_DirectoryRebirth
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
@@ -46,7 +46,7 @@
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-class Stagehand_DirectoryRebirth
+abstract class Stagehand_DirectoryRebirth_Element
 {
 
     // {{{ properties
@@ -62,7 +62,7 @@ class Stagehand_DirectoryRebirth
      */
 
     protected $path;
-    protected $elements = array();
+    protected $value;
 
     /**#@-*/
 
@@ -77,65 +77,42 @@ class Stagehand_DirectoryRebirth
      */
 
     // }}}
-    // {{{ memorize()
+    // {{{ __construct()
 
     /**
      * @param string $path
      */
-    public function memorize($path)
+    public function __construct($path)
     {
         $this->path = $path;
+    }
 
-        $scanner = new Stagehand_DirectoryScanner(array($this, 'collectElements'));
-        $scanner->scan($this->path);
+    // }}}
+    // {{{ setValue()
+
+    /**
+     * @param mixed $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    // }}}
+    // {{{ getValue()
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     // }}}
     // {{{ reproduce()
 
-    /**
-     * @throws Stagehand_DirectoryRebirth_Exception Memorize a directory first.
-     */
-    public function reproduce()
-    {
-        if (!$this->path) {
-            throw new Stagehand_DirectoryRebirth_Exception('Memorize a directory first.');
-        }
-
-        $cleaner = new Stagehand_DirectoryCleaner();
-        $cleaner->clean($this->path);
-        
-        foreach ($this->elements as $element) {
-            $element->reproduce();
-        }
-    }
-
-    // }}}
-    // {{{ reserve()
-
-    /**
-     * @throws Stagehand_DirectoryRebirth_Exception Memorize a directory first.
-     */
-    public function reserve()
-    {
-        if (!$this->path) {
-            throw new Stagehand_DirectoryRebirth_Exception('Memorize a directory first.');
-        }
-
-        register_shutdown_function(array($this, 'reproduce'));
-    }
-
-    // }}}
-    // {{{ collectElements()
-
-    /**
-     * @param string $filePath
-     */
-    public function collectElements($filePath)
-    {
-        $this->elements[] =
-            Stagehand_DirectoryRebirth_Element_Factory::factory($filePath);
-    }
+    abstract public function reproduce();
 
     /**#@-*/
 

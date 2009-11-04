@@ -32,13 +32,13 @@
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
- * @since      File available since Release 0.1.0
+ * @since      Link available since Release 0.1.0
  */
 
-// {{{ Stagehand_DirectoryRebirth
+// {{{ Stagehand_DirectoryRebirth_Element_Link
 
 /**
- * Stagehand_DirectoryRebirth
+ * A link element for Stagehand_DirectoryRebirth.
  *
  * @package    Stagehand_DirectoryRebirth
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
@@ -46,7 +46,7 @@
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-class Stagehand_DirectoryRebirth
+class Stagehand_DirectoryRebirth_Element_Link extends Stagehand_DirectoryRebirth_Element
 {
 
     // {{{ properties
@@ -55,14 +55,31 @@ class Stagehand_DirectoryRebirth
      * @access public
      */
 
+    // }}}
+    // {{{ __construct()
+
+    /**
+     * @param string $path
+     */
+    public function __construct($path)
+    {
+        parent::__construct($path);
+        $this->value = readlink($path);
+    }
+
+    // }}}
+    // {{{ reproduce()
+
+    public function reproduce()
+    {
+        symlink($this->value, $this->path);
+    }
+
     /**#@-*/
 
     /**#@+
      * @access protected
      */
-
-    protected $path;
-    protected $elements = array();
 
     /**#@-*/
 
@@ -75,67 +92,6 @@ class Stagehand_DirectoryRebirth
     /**#@+
      * @access public
      */
-
-    // }}}
-    // {{{ memorize()
-
-    /**
-     * @param string $path
-     */
-    public function memorize($path)
-    {
-        $this->path = $path;
-
-        $scanner = new Stagehand_DirectoryScanner(array($this, 'collectElements'));
-        $scanner->scan($this->path);
-    }
-
-    // }}}
-    // {{{ reproduce()
-
-    /**
-     * @throws Stagehand_DirectoryRebirth_Exception Memorize a directory first.
-     */
-    public function reproduce()
-    {
-        if (!$this->path) {
-            throw new Stagehand_DirectoryRebirth_Exception('Memorize a directory first.');
-        }
-
-        $cleaner = new Stagehand_DirectoryCleaner();
-        $cleaner->clean($this->path);
-        
-        foreach ($this->elements as $element) {
-            $element->reproduce();
-        }
-    }
-
-    // }}}
-    // {{{ reserve()
-
-    /**
-     * @throws Stagehand_DirectoryRebirth_Exception Memorize a directory first.
-     */
-    public function reserve()
-    {
-        if (!$this->path) {
-            throw new Stagehand_DirectoryRebirth_Exception('Memorize a directory first.');
-        }
-
-        register_shutdown_function(array($this, 'reproduce'));
-    }
-
-    // }}}
-    // {{{ collectElements()
-
-    /**
-     * @param string $filePath
-     */
-    public function collectElements($filePath)
-    {
-        $this->elements[] =
-            Stagehand_DirectoryRebirth_Element_Factory::factory($filePath);
-    }
 
     /**#@-*/
 

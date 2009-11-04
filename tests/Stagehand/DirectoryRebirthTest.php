@@ -109,6 +109,7 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
         $this->assertFileNotExists($this->directory . '/path/bar.txt');
         $this->assertFileNotExists($this->directory . '/path/to');
         $this->assertFileNotExists($this->directory . '/path/to/baz.txt');
+        $this->assertFileNotExists($this->directory . '/path/to/qux.txt');
 
         $rebirth->reproduce();
 
@@ -134,6 +135,11 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
         $this->assertFileExists($this->directory . '/path/to/baz.txt');
         $this->assertEquals(file_get_contents($this->directory . '/path/to/baz.txt'),
                             'baz file'
+                            );
+
+        $this->assertTrue(is_link($this->directory . '/path/to/qux.txt'));
+        $this->assertEquals(file_get_contents($this->directory . '/path/to/qux.txt'),
+                            'example'
                             );
     }
 
@@ -169,6 +175,10 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
         mkdir($this->directory . '/path/to');
         touch($this->directory . '/path/to/baz.txt');
         file_put_contents($this->directory . '/path/to/baz.txt', 'baz file');
+
+        symlink($this->directory . '/example.txt',
+                $this->directory . '/path/to/qux.txt'
+                );
     }
 
     /**#@-*/
