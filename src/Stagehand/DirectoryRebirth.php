@@ -62,7 +62,7 @@ class Stagehand_DirectoryRebirth
      */
 
     protected $path;
-    protected $directory = array();
+    protected $elements = array();
 
     /**#@-*/
 
@@ -85,7 +85,9 @@ class Stagehand_DirectoryRebirth
     public function memorize($path)
     {
         $this->path = $path;
-        $this->directory = $this->memorizeDirectory($path);
+
+        $scanner = new Stagehand_DirectoryScanner(array($this, 'collectElements'));
+        $scanner->scan($this->path);
     }
 
     // }}}
@@ -103,7 +105,7 @@ class Stagehand_DirectoryRebirth
         $cleaner = new Stagehand_DirectoryCleaner();
         $cleaner->clean($this->path);
         
-        $this->reproduceDirectory($this->path, $this->directory);
+        $this->reproduceDirectory();
     }
 
     // }}}
@@ -121,37 +123,28 @@ class Stagehand_DirectoryRebirth
         register_shutdown_function(array($this, 'reproduce'));
     }
 
+    // }}}
+    // {{{ collectElements()
+
+    /**
+     * @param string $filePath
+     */
+    public function collectElements($filePath)
+    {
+        $fileInfo = new SplFileInfo($filePath);
+
+        if ($fileInfo->isDir()) {
+            $this->elements[$filePath] = array();
+        } elseif ($fileInfo->isFile()) {
+            $this->elements[$filePath] = file_get_contents($filePath);
+        }
+    }
+
     /**#@-*/
 
     /**#@+
      * @access protected
      */
-
-    // }}}
-    // {{{ memorizeDirectory()
-
-    /**
-     * @param string $path
-     * @param array  $directory
-     * @return array
-     */
-    protected function memorizeDirectory($path, $directory = array())
-    {
-        foreach (new DirectoryIterator($path) as $fileInfo) {
-            if ($fileInfo->isDot()) {
-                continue;
-            }
-
-            $name = $fileInfo->getFilename();
-            if ($fileInfo->isDir()) {
-                $directory[$name] = $this->memorizeDirectory($fileInfo->getPathname());
-            } elseif ($fileInfo->isFile()) {
-                $directory[$name] = file_get_contents($fileInfo->getPathname());
-            }
-        }
-
-        return $directory;
-    }
 
     // }}}
     // {{{ reproduceDirectory()
@@ -160,20 +153,16 @@ class Stagehand_DirectoryRebirth
      * @param string $path
      * @param array  $directory
      */
-    protected function reproduceDirectory($path, $directory)
+    protected function reproduceDirectory()
     {
-        foreach ($directory as $name => $value) {
-            $targetPath = $path . '/' . $name;
-
+        foreach ($this->elements as $path => $value) {
             if (is_array($value)) {
-                mkdir($targetPath);
-                $this->reproduceDirectory($targetPath, $value);
+                mkdir($path);
             } else {
-                file_put_contents($targetPath, $value);
+                file_put_contents($path, $value);
             }
         }
     }
-
 
     /**#@-*/
 
