@@ -100,9 +100,13 @@ class Stagehand_DirectoryRebirth
         $cleaner->clean($this->path);
         
         foreach ($this->directory as $key => $value) {
-            $filePath = $this->path . '/' . $key;
+            $path = $this->path . '/' . $key;
 
-            file_put_contents($filePath, $value);
+            if (is_array($value)) {
+                mkdir($path);
+            } else {
+                file_put_contents($path, $value);
+            }
         }
     }
 
@@ -125,7 +129,7 @@ class Stagehand_DirectoryRebirth
 
             $name = $fileInfo->getFilename();
             if ($fileInfo->isDir()) {
-
+                $directory[$name] = array();
             } elseif ($fileInfo->isFile()) {
                 $directory[$name] = file_get_contents($fileInfo->getPathname());
             }

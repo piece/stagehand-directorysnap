@@ -110,10 +110,10 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
         $cleaner->clean($this->directory);
 
         $this->assertFileNotExists($this->directory . '/example.txt');
-        /* $this->assertFileNotExists($this->directory . '/path'); */
-        /* $this->assertFileNotExists($this->directory . '/path/to'); */
+        $this->assertFileNotExists($this->directory . '/path');
         /* $this->assertFileNotExists($this->directory . '/path/foo.txt'); */
         /* $this->assertFileNotExists($this->directory . '/path/bar.txt'); */
+        /* $this->assertFileNotExists($this->directory . '/path/to'); */
         /* $this->assertFileNotExists($this->directory . '/path/to/baz.txt'); */
 
         $rebirth->reproduce();
@@ -123,10 +123,11 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
                             'example'
                             );
 
-        /* $this->assertFileExists($this->directory . '/path'); */
-        /* $this->assertFileExists($this->directory . '/path/to'); */
+        $this->assertFileExists($this->directory . '/path');
+        $this->assertTrue(is_dir($this->directory . '/path'));
         /* $this->assertFileExists($this->directory . '/path/foo.txt'); */
         /* $this->assertFileExists($this->directory . '/path/bar.txt'); */
+        /* $this->assertFileExists($this->directory . '/path/to'); */
         /* $this->assertFileExists($this->directory . '/path/to/baz.txt'); */
     }
 
