@@ -86,19 +86,6 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
         }
 
         mkdir($this->directory);
-
-        touch($this->directory . '/example.txt');
-        file_put_contents($this->directory . '/example.txt', 'example');
-
-        mkdir($this->directory . '/path');
-        touch($this->directory . '/path/foo.txt');
-        touch($this->directory . '/path/bar.txt');
-        file_put_contents($this->directory . '/path/foo.txt', 'foo file');
-        file_put_contents($this->directory . '/path/bar.txt', 'bar file');
-
-        mkdir($this->directory . '/path/to');
-        touch($this->directory . '/path/to/baz.txt');
-        file_put_contents($this->directory . '/path/to/baz.txt', 'baz file');
     }
 
     public function tearDown() { }
@@ -108,6 +95,8 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
      */
     public function memorizeAndReproduceDirectory()
     {
+        $this->createTestFiles();
+
         $rebirth = new Stagehand_DirectoryRebirth();
         $rebirth->memorize($this->directory);
 
@@ -148,11 +137,39 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
                             );
     }
 
+    /**
+     * @test
+     */
+    public function reserveDirectoryRebirthByShutdownStep()
+    {
+        $rebirth = new Stagehand_DirectoryRebirth();
+        $rebirth->memorize($this->directory);
+        $rebirth->reserve();
+
+        $this->createTestFiles();
+    }
+
     /**#@-*/
 
     /**#@+
      * @access protected
      */
+
+    protected function createTestFiles()
+    {
+        touch($this->directory . '/example.txt');
+        file_put_contents($this->directory . '/example.txt', 'example');
+
+        mkdir($this->directory . '/path');
+        touch($this->directory . '/path/foo.txt');
+        touch($this->directory . '/path/bar.txt');
+        file_put_contents($this->directory . '/path/foo.txt', 'foo file');
+        file_put_contents($this->directory . '/path/bar.txt', 'bar file');
+
+        mkdir($this->directory . '/path/to');
+        touch($this->directory . '/path/to/baz.txt');
+        file_put_contents($this->directory . '/path/to/baz.txt', 'baz file');
+    }
 
     /**#@-*/
 

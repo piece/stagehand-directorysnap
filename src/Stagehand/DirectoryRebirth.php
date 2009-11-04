@@ -89,17 +89,36 @@ class Stagehand_DirectoryRebirth
     }
 
     // }}}
-    // {{{ reproduce
+    // {{{ reproduce()
 
     /**
-     *
+     * @throws Stagehand_DirectoryRebirth_Exception Memorize a directory first.
      */
     public function reproduce()
     {
+        if (!$this->path) {
+            throw new Stagehand_DirectoryRebirth_Exception('Memorize a directory first.');
+        }
+
         $cleaner = new Stagehand_DirectoryCleaner();
         $cleaner->clean($this->path);
         
         $this->reproduceDirectory($this->path, $this->directory);
+    }
+
+    // }}}
+    // {{{ reserve()
+
+    /**
+     * @throws Stagehand_DirectoryRebirth_Exception Memorize a directory first.
+     */
+    public function reserve()
+    {
+        if (!$this->path) {
+            throw new Stagehand_DirectoryRebirth_Exception('Memorize a directory first.');
+        }
+
+        register_shutdown_function(array($this, 'reproduce'));
     }
 
     /**#@-*/
@@ -109,7 +128,7 @@ class Stagehand_DirectoryRebirth
      */
 
     // }}}
-    // {{{ memorizeDirectory
+    // {{{ memorizeDirectory()
 
     /**
      * @param string $path
@@ -135,7 +154,7 @@ class Stagehand_DirectoryRebirth
     }
 
     // }}}
-    // {{{ reproduceDirectory
+    // {{{ reproduceDirectory()
 
     /**
      * @param string $path
