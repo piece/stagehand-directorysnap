@@ -81,6 +81,18 @@ class Stagehand_DirectoryRebirth_Element_Directory extends Stagehand_DirectoryRe
         mkdir($this->path, 0777, true);
     }
 
+    // }}}
+    // {{{ push()
+
+    /**
+     * @param string $path
+     */
+    public function push($path)
+    {
+        $dirPath = $path . str_replace($this->rootPath, '', $this->path);
+        mkdir($dirPath, 0777, true);
+    }
+
     /**#@-*/
 
     /**#@+

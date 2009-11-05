@@ -75,6 +75,18 @@ class Stagehand_DirectoryRebirth_Element_Link extends Stagehand_DirectoryRebirth
         symlink($this->value, $this->path);
     }
 
+    // }}}
+    // {{{ push()
+
+    /**
+     * @param string $path
+     */
+    public function push($path)
+    {
+        $filePath = $path . str_replace($this->rootPath, '', $this->path);
+        symlink($this->value, $filePath);
+    }
+
     /**#@-*/
 
     /**#@+

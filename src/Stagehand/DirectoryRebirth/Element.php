@@ -63,6 +63,7 @@ abstract class Stagehand_DirectoryRebirth_Element
 
     protected $path;
     protected $value;
+    protected $rootPath;
 
     /**#@-*/
 
@@ -110,9 +111,28 @@ abstract class Stagehand_DirectoryRebirth_Element
     }
 
     // }}}
+    // {{{ setRoot()
+
+    /**
+     * @param string $path
+     */
+    public function setRoot($path)
+    {
+        $this->rootPath = $path;
+    }
+
+    // }}}
     // {{{ reproduce()
 
     abstract public function reproduce();
+
+    // }}}
+    // {{{ push()
+
+    /**
+     * @param string $path
+     */
+    abstract public function push($path);
 
     /**#@-*/
 

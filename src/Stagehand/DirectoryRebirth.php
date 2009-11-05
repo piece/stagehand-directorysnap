@@ -63,6 +63,8 @@ class Stagehand_DirectoryRebirth
 
     protected $path;
     protected $elements = array();
+    protected $temporaryPath;
+    protected $useTemporary = false;
 
     /**#@-*/
 
@@ -86,8 +88,14 @@ class Stagehand_DirectoryRebirth
     {
         $this->path = $path;
 
-        $scanner = new Stagehand_DirectoryScanner(array($this, 'collectElements'));
-        $scanner->scan($this->path, false);
+        if ($this->useTemporary) {
+            $callback = array($this, 'pushToTemporary');
+        } else {
+            $callback = array($this, 'collectElements');
+        }
+
+        $scanner = new Stagehand_DirectoryScanner($callback, false);
+        $scanner->scan($this->path);
     }
 
     // }}}
@@ -105,8 +113,13 @@ class Stagehand_DirectoryRebirth
         $cleaner = new Stagehand_DirectoryCleaner();
         $cleaner->clean($this->path);
         
-        foreach ($this->elements as $element) {
-            $element->reproduce();
+        if ($this->useTemporary) {
+            $scanner = new Stagehand_DirectoryScanner(array($this, 'reproduceOrigin'), false);
+            $scanner->scan($this->temporaryPath);
+        } else {
+            foreach ($this->elements as $element) {
+                $element->reproduce();
+            }
         }
     }
 
@@ -126,6 +139,18 @@ class Stagehand_DirectoryRebirth
     }
 
     // }}}
+    // {{{ useTemporary()
+
+    /**
+     * @param string $temporaryPath
+     */
+    public function useTemporary($temporaryPath)
+    {
+        $this->useTemporary = true;
+        $this->temporaryPath = $temporaryPath;
+    }
+
+    // }}}
     // {{{ collectElements()
 
     /**
@@ -135,6 +160,32 @@ class Stagehand_DirectoryRebirth
     {
         $this->elements[] =
             Stagehand_DirectoryRebirth_Element_Factory::factory($filePath);
+    }
+
+    // }}}
+    // {{{ pushToTemporary()
+
+    /**
+     * @param string $filePath
+     */
+    public function pushToTemporary($filePath)
+    {
+        $element = Stagehand_DirectoryRebirth_Element_Factory::factory($filePath);
+        $element->setRoot($this->path);
+        $element->push($this->temporaryPath);
+    }
+
+    // }}}
+    // {{{ reproduceOrigin()
+
+    /**
+     * @param string $filePath
+     */
+    public function reproduceOrigin($filePath)
+    {
+        $element = Stagehand_DirectoryRebirth_Element_Factory::factory($filePath);
+        $element->setRoot($this->temporaryPath);
+        $element->push($this->path);
     }
 
     /**#@-*/

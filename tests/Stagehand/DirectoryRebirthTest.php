@@ -78,14 +78,10 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->directory = dirname(__FILE__) . '/DirectoryRebirthTest';
+        $this->temporary = dirname(__FILE__) . '/temporary';
 
-        if (file_exists($this->directory)) {
-            $cleaner = new Stagehand_DirectoryCleaner();
-            $cleaner->clean($this->directory);
-            rmdir($this->directory);
-        }
-
-        mkdir($this->directory);
+        $this->resetDirectory($this->directory);
+        $this->resetDirectory($this->temporary);
     }
 
     public function tearDown() { }
@@ -95,7 +91,7 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
      */
     public function memorizeAndReproduceDirectory()
     {
-        $this->createTestFiles();
+        $this->createTestFiles($this->directory);
 
         $rebirth = new Stagehand_DirectoryRebirth();
         $rebirth->memorize($this->directory);
@@ -113,34 +109,36 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
 
         $rebirth->reproduce();
 
-        $this->assertFileExists($this->directory . '/example.txt');
-        $this->assertEquals(file_get_contents($this->directory . '/example.txt'),
-                            'example'
-                            );
+        $this->assertTestFileExists($this->directory);
+    }
 
-        $this->assertFileExists($this->directory . '/path');
-        $this->assertTrue(is_dir($this->directory . '/path'));
-        $this->assertFileExists($this->directory . '/path/foo.txt');
-        $this->assertFileExists($this->directory . '/path/bar.txt');
-        $this->assertEquals(file_get_contents($this->directory . '/path/foo.txt'),
-                            'foo file'
-                            );
-        $this->assertEquals(file_get_contents($this->directory . '/path/bar.txt'),
-                            'bar file'
-                            );
+    /**
+     * @test
+     */
+    public function useTemporary()
+    {
+        $this->createTestFiles($this->directory);
 
-        $this->assertFileExists($this->directory . '/path/to');
-        $this->assertTrue(is_dir($this->directory . '/path/to'));
+        $rebirth = new Stagehand_DirectoryRebirth();
+        $rebirth->useTemporary($this->temporary);
+        $rebirth->memorize($this->directory);
 
-        $this->assertFileExists($this->directory . '/path/to/baz.txt');
-        $this->assertEquals(file_get_contents($this->directory . '/path/to/baz.txt'),
-                            'baz file'
-                            );
+        $this->assertTestFileExists($this->temporary);
 
-        $this->assertTrue(is_link($this->directory . '/path/to/qux.txt'));
-        $this->assertEquals(file_get_contents($this->directory . '/path/to/qux.txt'),
-                            'example'
-                            );
+        $cleaner = new Stagehand_DirectoryCleaner();
+        $cleaner->clean($this->directory);
+
+        $this->assertFileNotExists($this->directory . '/example.txt');
+        $this->assertFileNotExists($this->directory . '/path');
+        $this->assertFileNotExists($this->directory . '/path/foo.txt');
+        $this->assertFileNotExists($this->directory . '/path/bar.txt');
+        $this->assertFileNotExists($this->directory . '/path/to');
+        $this->assertFileNotExists($this->directory . '/path/to/baz.txt');
+        $this->assertFileNotExists($this->directory . '/path/to/qux.txt');
+
+        $rebirth->reproduce();
+
+        $this->assertTestFileExists($this->directory);
     }
 
     /**
@@ -152,7 +150,7 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
         $rebirth->memorize($this->directory);
         $rebirth->reserve();
 
-        $this->createTestFiles();
+        $this->createTestFiles($this->directory);
     }
 
     /**#@-*/
@@ -161,24 +159,66 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
      * @access protected
      */
 
-    protected function createTestFiles()
+    protected function resetDirectory($path)
     {
-        touch($this->directory . '/example.txt');
-        file_put_contents($this->directory . '/example.txt', 'example');
+        if (file_exists($path)) {
+            $cleaner = new Stagehand_DirectoryCleaner();
+            $cleaner->clean($path);
+        } else {
+            mkdir($path);
+        }
+    }
 
-        mkdir($this->directory . '/path');
-        touch($this->directory . '/path/foo.txt');
-        touch($this->directory . '/path/bar.txt');
-        file_put_contents($this->directory . '/path/foo.txt', 'foo file');
-        file_put_contents($this->directory . '/path/bar.txt', 'bar file');
+    protected function createTestFiles($path)
+    {
+        touch($path . '/example.txt');
+        file_put_contents($path . '/example.txt', 'example');
 
-        mkdir($this->directory . '/path/to');
-        touch($this->directory . '/path/to/baz.txt');
-        file_put_contents($this->directory . '/path/to/baz.txt', 'baz file');
+        mkdir($path . '/path');
+        touch($path . '/path/foo.txt');
+        touch($path . '/path/bar.txt');
+        file_put_contents($path . '/path/foo.txt', 'foo file');
+        file_put_contents($path . '/path/bar.txt', 'bar file');
 
-        symlink($this->directory . '/example.txt',
-                $this->directory . '/path/to/qux.txt'
+        mkdir($path . '/path/to');
+        touch($path . '/path/to/baz.txt');
+        file_put_contents($path . '/path/to/baz.txt', 'baz file');
+
+        symlink($path . '/example.txt',
+                $path . '/path/to/qux.txt'
                 );
+    }
+
+    protected function assertTestFileExists($path)
+    {
+        $this->assertFileExists($path . '/example.txt');
+        $this->assertEquals(file_get_contents($path . '/example.txt'),
+                            'example'
+                            );
+
+        $this->assertFileExists($path . '/path');
+        $this->assertTrue(is_dir($path . '/path'));
+        $this->assertFileExists($path . '/path/foo.txt');
+        $this->assertFileExists($path . '/path/bar.txt');
+        $this->assertEquals(file_get_contents($path . '/path/foo.txt'),
+                            'foo file'
+                            );
+        $this->assertEquals(file_get_contents($path . '/path/bar.txt'),
+                            'bar file'
+                            );
+
+        $this->assertFileExists($path . '/path/to');
+        $this->assertTrue(is_dir($path . '/path/to'));
+
+        $this->assertFileExists($path . '/path/to/baz.txt');
+        $this->assertEquals(file_get_contents($path . '/path/to/baz.txt'),
+                            'baz file'
+                            );
+
+        $this->assertTrue(is_link($path . '/path/to/qux.txt'));
+        $this->assertEquals(file_get_contents($path . '/path/to/qux.txt'),
+                            'example'
+                            );
     }
 
     /**#@-*/

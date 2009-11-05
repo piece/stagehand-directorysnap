@@ -98,6 +98,23 @@ class Stagehand_DirectoryRebirth_Element_File extends Stagehand_DirectoryRebirth
         file_put_contents($this->path, $this->value);
     }
 
+    // }}}
+    // {{{ push()
+
+    /**
+     * @param string $path
+     */
+    public function push($path)
+    {
+        $filePath = $path . str_replace($this->rootPath, '', $this->path);
+        $directoryPath = dirname($filePath);
+        if (!$directoryPath) {
+            mkdir($directoryPath, true);
+        }
+
+        file_put_contents($filePath, $this->value);
+    }
+
     /**#@-*/
 
     /**#@+
