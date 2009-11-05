@@ -78,7 +78,7 @@ class Stagehand_DirectoryRebirth_Element_Directory extends Stagehand_DirectoryRe
 
     public function reproduce()
     {
-        mkdir($this->path, true);
+        mkdir($this->path, 0777, true);
     }
 
     /**#@-*/
