@@ -87,7 +87,7 @@ class Stagehand_DirectoryRebirth
         $this->path = $path;
 
         $scanner = new Stagehand_DirectoryScanner(array($this, 'collectElements'));
-        $scanner->scan($this->path);
+        $scanner->scan($this->path, false);
     }
 
     // }}}
