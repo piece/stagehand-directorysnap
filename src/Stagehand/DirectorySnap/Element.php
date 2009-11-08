@@ -111,34 +111,50 @@ abstract class Stagehand_DirectorySnap_Element
     }
 
     // }}}
-    // {{{ setRoot()
-
-    /**
-     * @param string $path
-     */
-    public function setRoot($path)
-    {
-        $this->rootPath = $path;
-    }
-
-    // }}}
-    // {{{ restore()
-
-    abstract public function restore();
-
-    // }}}
     // {{{ push()
 
     /**
-     * @param string $path
+     * @param string $outputPath
+     * @param string $trimPath
      */
-    abstract public function push($path);
+    public function push($outputPath, $trimPath = null)
+    {
+        $path = $this->normalizePath($outputPath, $trimPath);
+        $this->pushValue($path);
+    }
 
     /**#@-*/
 
     /**#@+
      * @access protected
      */
+
+    // }}}
+    // {{{ normalizePath()
+
+    /**
+     * @param string $outputPath
+     * @param string $trimPath
+     * @retrun string
+     */
+    protected function normalizePath($outputPath, $trimPath = null)
+    {
+        if ($trimPath) {
+            $outputPath .= str_replace($trimPath, '', $this->path);
+        } else {
+            $outputPath = $this->path;
+        }
+
+        return $outputPath;
+    }
+
+    // }}}
+    // {{{ pushValue()
+
+    /**
+     * @param string $path
+     */
+    abstract protected function pushValue($path);
 
     /**#@-*/
 

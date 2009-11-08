@@ -118,7 +118,7 @@ class Stagehand_DirectorySnap
             $scanner->scan($this->temporaryPath);
         } else {
             foreach ($this->elements as $element) {
-                $element->restore();
+                $element->push($this->path);
             }
         }
     }
@@ -171,8 +171,7 @@ class Stagehand_DirectorySnap
     public function pushToTemporary($filePath)
     {
         $element = Stagehand_DirectorySnap_Element_Factory::factory($filePath);
-        $element->setRoot($this->path);
-        $element->push($this->temporaryPath);
+        $element->push($this->temporaryPath, $this->path);
     }
 
     // }}}
@@ -184,8 +183,7 @@ class Stagehand_DirectorySnap
     public function restoreOrigin($filePath)
     {
         $element = Stagehand_DirectorySnap_Element_Factory::factory($filePath);
-        $element->setRoot($this->temporaryPath);
-        $element->push($this->path);
+        $element->push($this->path, $this->temporaryPath);
     }
 
     /**#@-*/

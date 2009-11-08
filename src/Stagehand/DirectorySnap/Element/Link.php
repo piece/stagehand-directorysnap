@@ -67,31 +67,22 @@ class Stagehand_DirectorySnap_Element_Link extends Stagehand_DirectorySnap_Eleme
         $this->value = readlink($path);
     }
 
-    // }}}
-    // {{{ restore()
-
-    public function restore()
-    {
-        symlink($this->value, $this->path);
-    }
-
-    // }}}
-    // {{{ push()
-
-    /**
-     * @param string $path
-     */
-    public function push($path)
-    {
-        $filePath = $path . str_replace($this->rootPath, '', $this->path);
-        symlink($this->value, $filePath);
-    }
-
     /**#@-*/
 
     /**#@+
      * @access protected
      */
+
+    // }}}
+    // {{{ pushValue()
+
+    /**
+     * @param string $path
+     */
+    protected function pushValue($path)
+    {
+        symlink($this->value, $path);
+    }
 
     /**#@-*/
 

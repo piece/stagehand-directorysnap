@@ -85,41 +85,27 @@ class Stagehand_DirectorySnap_Element_File extends Stagehand_DirectorySnap_Eleme
      * @access public
      */
 
-    // }}}
-    // {{{ restore()
-
-    public function restore()
-    {
-        $directoryPath = dirname($this->path);
-        if (!$directoryPath) {
-            mkdir($directoryPath, true);
-        }
-
-        file_put_contents($this->path, $this->value);
-    }
-
-    // }}}
-    // {{{ push()
-
-    /**
-     * @param string $path
-     */
-    public function push($path)
-    {
-        $filePath = $path . str_replace($this->rootPath, '', $this->path);
-        $directoryPath = dirname($filePath);
-        if (!$directoryPath) {
-            mkdir($directoryPath, true);
-        }
-
-        file_put_contents($filePath, $this->value);
-    }
-
     /**#@-*/
 
     /**#@+
      * @access protected
      */
+
+    // }}}
+    // {{{ pushValue()
+
+    /**
+     * @param string $path
+     */
+    protected function pushValue($path)
+    {
+        $directoryPath = dirname($path);
+        if (!$directoryPath) {
+            mkdir($directoryPath, true);
+        }
+
+        file_put_contents($path, $this->value);
+    }
 
     /**#@-*/
 
