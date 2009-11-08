@@ -144,7 +144,7 @@ class Stagehand_DirectorySnapTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function reserveDirectorySnapByShutdownStep()
+    public function reserveDirectoryRestoringByShutdownStep()
     {
         $snap = new Stagehand_DirectorySnap();
         $snap->snap($this->directory);
