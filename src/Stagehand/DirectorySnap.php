@@ -61,10 +61,10 @@ class Stagehand_DirectorySnap
      * @access protected
      */
 
-    protected $path;
+    protected $snappedPath;
     protected $elements = array();
-    protected $temporaryPath;
     protected $useTemporary = false;
+    protected $temporaryPath;
 
     /**#@-*/
 
@@ -86,7 +86,7 @@ class Stagehand_DirectorySnap
      */
     public function snap($path)
     {
-        $this->path = $path;
+        $this->snappedPath = $path;
 
         if ($this->useTemporary) {
             $callback = array($this, 'pushToTemporary');
@@ -95,7 +95,7 @@ class Stagehand_DirectorySnap
         }
 
         $scanner = new Stagehand_DirectoryScanner($callback, false);
-        $scanner->scan($this->path);
+        $scanner->scan($this->snappedPath);
     }
 
     // }}}
@@ -106,19 +106,19 @@ class Stagehand_DirectorySnap
      */
     public function restore()
     {
-        if (!$this->path) {
+        if (!$this->snappedPath) {
             throw new Stagehand_DirectorySnap_Exception('Snap a directory first.');
         }
 
         $cleaner = new Stagehand_DirectoryCleaner();
-        $cleaner->clean($this->path);
+        $cleaner->clean($this->snappedPath);
         
         if ($this->useTemporary) {
             $scanner = new Stagehand_DirectoryScanner(array($this, 'restoreOrigin'), false);
             $scanner->scan($this->temporaryPath);
         } else {
             foreach ($this->elements as $element) {
-                $element->push($this->path);
+                $element->push($this->snappedPath);
             }
         }
     }
@@ -131,7 +131,7 @@ class Stagehand_DirectorySnap
      */
     public function reserve()
     {
-        if (!$this->path) {
+        if (!$this->snappedPath) {
             throw new Stagehand_DirectorySnap_Exception('Snap a directory first.');
         }
 
@@ -171,7 +171,7 @@ class Stagehand_DirectorySnap
     public function pushToTemporary($filePath)
     {
         $element = Stagehand_DirectorySnap_Element_Factory::factory($filePath);
-        $element->push($this->temporaryPath, $this->path);
+        $element->push($this->temporaryPath, $this->snappedPath);
     }
 
     // }}}
@@ -183,7 +183,7 @@ class Stagehand_DirectorySnap
     public function restoreOrigin($filePath)
     {
         $element = Stagehand_DirectorySnap_Element_Factory::factory($filePath);
-        $element->push($this->path, $this->temporaryPath);
+        $element->push($this->snappedPath, $this->temporaryPath);
     }
 
     /**#@-*/
