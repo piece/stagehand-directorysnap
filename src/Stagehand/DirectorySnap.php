@@ -99,12 +99,12 @@ class Stagehand_DirectorySnap
     }
 
     // }}}
-    // {{{ reproduce()
+    // {{{ restore()
 
     /**
      * @throws Stagehand_DirectorySnap_Exception Snap a directory first.
      */
-    public function reproduce()
+    public function restore()
     {
         if (!$this->path) {
             throw new Stagehand_DirectorySnap_Exception('Snap a directory first.');
@@ -114,11 +114,11 @@ class Stagehand_DirectorySnap
         $cleaner->clean($this->path);
         
         if ($this->useTemporary) {
-            $scanner = new Stagehand_DirectoryScanner(array($this, 'reproduceOrigin'), false);
+            $scanner = new Stagehand_DirectoryScanner(array($this, 'restoreOrigin'), false);
             $scanner->scan($this->temporaryPath);
         } else {
             foreach ($this->elements as $element) {
-                $element->reproduce();
+                $element->restore();
             }
         }
     }
@@ -135,7 +135,7 @@ class Stagehand_DirectorySnap
             throw new Stagehand_DirectorySnap_Exception('Snap a directory first.');
         }
 
-        register_shutdown_function(array($this, 'reproduce'));
+        register_shutdown_function(array($this, 'restore'));
     }
 
     // }}}
@@ -176,12 +176,12 @@ class Stagehand_DirectorySnap
     }
 
     // }}}
-    // {{{ reproduceOrigin()
+    // {{{ restoreOrigin()
 
     /**
      * @param string $filePath
      */
-    public function reproduceOrigin($filePath)
+    public function restoreOrigin($filePath)
     {
         $element = Stagehand_DirectorySnap_Element_Factory::factory($filePath);
         $element->setRoot($this->temporaryPath);

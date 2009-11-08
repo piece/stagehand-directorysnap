@@ -68,9 +68,9 @@ class Stagehand_DirectorySnap_Element_Link extends Stagehand_DirectorySnap_Eleme
     }
 
     // }}}
-    // {{{ reproduce()
+    // {{{ restore()
 
-    public function reproduce()
+    public function restore()
     {
         symlink($this->value, $this->path);
     }

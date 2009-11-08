@@ -86,9 +86,9 @@ class Stagehand_DirectorySnap_Element_File extends Stagehand_DirectorySnap_Eleme
      */
 
     // }}}
-    // {{{ reproduce()
+    // {{{ restore()
 
-    public function reproduce()
+    public function restore()
     {
         $directoryPath = dirname($this->path);
         if (!$directoryPath) {

@@ -89,7 +89,7 @@ class Stagehand_DirectorySnapTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function snapAndReproduceDirectory()
+    public function snapAndRestoreDirectory()
     {
         $this->createTestFiles($this->directory);
 
@@ -107,7 +107,7 @@ class Stagehand_DirectorySnapTest extends PHPUnit_Framework_TestCase
         $this->assertFileNotExists($this->directory . '/path/to/baz.txt');
         $this->assertFileNotExists($this->directory . '/path/to/qux.txt');
 
-        $snap->reproduce();
+        $snap->restore();
 
         $this->assertTestFileExists($this->directory);
     }
@@ -136,7 +136,7 @@ class Stagehand_DirectorySnapTest extends PHPUnit_Framework_TestCase
         $this->assertFileNotExists($this->directory . '/path/to/baz.txt');
         $this->assertFileNotExists($this->directory . '/path/to/qux.txt');
 
-        $snap->reproduce();
+        $snap->restore();
 
         $this->assertTestFileExists($this->directory);
     }

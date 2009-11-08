@@ -122,9 +122,9 @@ abstract class Stagehand_DirectorySnap_Element
     }
 
     // }}}
-    // {{{ reproduce()
+    // {{{ restore()
 
-    abstract public function reproduce();
+    abstract public function restore();
 
     // }}}
     // {{{ push()

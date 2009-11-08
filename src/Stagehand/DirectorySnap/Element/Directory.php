@@ -74,9 +74,9 @@ class Stagehand_DirectorySnap_Element_Directory extends Stagehand_DirectorySnap_
      */
 
     // }}}
-    // {{{ reproduce()
+    // {{{ restore()
 
-    public function reproduce()
+    public function restore()
     {
         mkdir($this->path, 0777, true);
     }
