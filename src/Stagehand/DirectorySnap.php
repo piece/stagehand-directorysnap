@@ -79,12 +79,12 @@ class Stagehand_DirectorySnap
      */
 
     // }}}
-    // {{{ memorize()
+    // {{{ snap()
 
     /**
      * @param string $path
      */
-    public function memorize($path)
+    public function snap($path)
     {
         $this->path = $path;
 
@@ -102,12 +102,12 @@ class Stagehand_DirectorySnap
     // {{{ reproduce()
 
     /**
-     * @throws Stagehand_DirectorySnap_Exception Memorize a directory first.
+     * @throws Stagehand_DirectorySnap_Exception Snap a directory first.
      */
     public function reproduce()
     {
         if (!$this->path) {
-            throw new Stagehand_DirectorySnap_Exception('Memorize a directory first.');
+            throw new Stagehand_DirectorySnap_Exception('Snap a directory first.');
         }
 
         $cleaner = new Stagehand_DirectoryCleaner();
@@ -127,12 +127,12 @@ class Stagehand_DirectorySnap
     // {{{ reserve()
 
     /**
-     * @throws Stagehand_DirectorySnap_Exception Memorize a directory first.
+     * @throws Stagehand_DirectorySnap_Exception Snap a directory first.
      */
     public function reserve()
     {
         if (!$this->path) {
-            throw new Stagehand_DirectorySnap_Exception('Memorize a directory first.');
+            throw new Stagehand_DirectorySnap_Exception('Snap a directory first.');
         }
 
         register_shutdown_function(array($this, 'reproduce'));

@@ -89,12 +89,12 @@ class Stagehand_DirectorySnapTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function memorizeAndReproduceDirectory()
+    public function snapAndReproduceDirectory()
     {
         $this->createTestFiles($this->directory);
 
         $snap = new Stagehand_DirectorySnap();
-        $snap->memorize($this->directory);
+        $snap->snap($this->directory);
 
         $cleaner = new Stagehand_DirectoryCleaner();
         $cleaner->clean($this->directory);
@@ -121,7 +121,7 @@ class Stagehand_DirectorySnapTest extends PHPUnit_Framework_TestCase
 
         $snap = new Stagehand_DirectorySnap();
         $snap->useTemporary($this->temporary);
-        $snap->memorize($this->directory);
+        $snap->snap($this->directory);
 
         $this->assertTestFileExists($this->temporary);
 
@@ -147,7 +147,7 @@ class Stagehand_DirectorySnapTest extends PHPUnit_Framework_TestCase
     public function reserveDirectorySnapByShutdownStep()
     {
         $snap = new Stagehand_DirectorySnap();
-        $snap->memorize($this->directory);
+        $snap->snap($this->directory);
         $snap->reserve();
 
         $this->createTestFiles($this->directory);
