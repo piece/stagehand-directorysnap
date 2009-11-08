@@ -28,25 +28,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      File available since Release 0.1.0
  */
 
-// {{{ Stagehand_PHP_DirectoryRebirthTest
+// {{{ Stagehand_PHP_DirectorySnapTest
 
 /**
- * Some tests for Stagehand_DirectoryRebirth
+ * Some tests for Stagehand_DirectorySnap
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
+class Stagehand_DirectorySnapTest extends PHPUnit_Framework_TestCase
 {
 
     // {{{ properties
@@ -77,7 +77,7 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->directory = dirname(__FILE__) . '/DirectoryRebirthTest';
+        $this->directory = dirname(__FILE__) . '/DirectorySnapTest';
         $this->temporary = dirname(__FILE__) . '/temporary';
 
         $this->resetDirectory($this->directory);
@@ -93,8 +93,8 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
     {
         $this->createTestFiles($this->directory);
 
-        $rebirth = new Stagehand_DirectoryRebirth();
-        $rebirth->memorize($this->directory);
+        $snap = new Stagehand_DirectorySnap();
+        $snap->memorize($this->directory);
 
         $cleaner = new Stagehand_DirectoryCleaner();
         $cleaner->clean($this->directory);
@@ -107,7 +107,7 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
         $this->assertFileNotExists($this->directory . '/path/to/baz.txt');
         $this->assertFileNotExists($this->directory . '/path/to/qux.txt');
 
-        $rebirth->reproduce();
+        $snap->reproduce();
 
         $this->assertTestFileExists($this->directory);
     }
@@ -119,9 +119,9 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
     {
         $this->createTestFiles($this->directory);
 
-        $rebirth = new Stagehand_DirectoryRebirth();
-        $rebirth->useTemporary($this->temporary);
-        $rebirth->memorize($this->directory);
+        $snap = new Stagehand_DirectorySnap();
+        $snap->useTemporary($this->temporary);
+        $snap->memorize($this->directory);
 
         $this->assertTestFileExists($this->temporary);
 
@@ -136,7 +136,7 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
         $this->assertFileNotExists($this->directory . '/path/to/baz.txt');
         $this->assertFileNotExists($this->directory . '/path/to/qux.txt');
 
-        $rebirth->reproduce();
+        $snap->reproduce();
 
         $this->assertTestFileExists($this->directory);
     }
@@ -144,11 +144,11 @@ class Stagehand_DirectoryRebirthTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function reserveDirectoryRebirthByShutdownStep()
+    public function reserveDirectorySnapByShutdownStep()
     {
-        $rebirth = new Stagehand_DirectoryRebirth();
-        $rebirth->memorize($this->directory);
-        $rebirth->reserve();
+        $snap = new Stagehand_DirectorySnap();
+        $snap->memorize($this->directory);
+        $snap->reserve();
 
         $this->createTestFiles($this->directory);
     }

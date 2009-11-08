@@ -28,128 +28,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      File available since Release 0.1.0
  */
 
-// {{{ Stagehand_DirectoryRebirth_Element
+// {{{ Stagehand_DirectorySnap_Exception
 
 /**
- * A element for Stagehand_DirectoryRebirth.
+ * The exception class for Stagehand_DirectorySnap.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-abstract class Stagehand_DirectoryRebirth_Element
-{
-
-    // {{{ properties
-
-    /**#@+
-     * @access public
-     */
-
-    /**#@-*/
-
-    /**#@+
-     * @access protected
-     */
-
-    protected $path;
-    protected $value;
-    protected $rootPath;
-
-    /**#@-*/
-
-    /**#@+
-     * @access private
-     */
-
-    /**#@-*/
-
-    /**#@+
-     * @access public
-     */
-
-    // }}}
-    // {{{ __construct()
-
-    /**
-     * @param string $path
-     */
-    public function __construct($path)
-    {
-        $this->path = $path;
-    }
-
-    // }}}
-    // {{{ setValue()
-
-    /**
-     * @param mixed $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
-
-    // }}}
-    // {{{ getValue()
-
-    /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    // }}}
-    // {{{ setRoot()
-
-    /**
-     * @param string $path
-     */
-    public function setRoot($path)
-    {
-        $this->rootPath = $path;
-    }
-
-    // }}}
-    // {{{ reproduce()
-
-    abstract public function reproduce();
-
-    // }}}
-    // {{{ push()
-
-    /**
-     * @param string $path
-     */
-    abstract public function push($path);
-
-    /**#@-*/
-
-    /**#@+
-     * @access protected
-     */
-
-    /**#@-*/
-
-    /**#@+
-     * @access private
-     */
-
-    /**#@-*/
-
-    // }}}
-}
+class Stagehand_DirectorySnap_Exception extends Exception {}
 
 // }}}
 

@@ -28,25 +28,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      Link available since Release 0.1.0
  */
 
-// {{{ Stagehand_DirectoryRebirth_Element_Link
+// {{{ Stagehand_DirectorySnap_Element_Link
 
 /**
- * A link element for Stagehand_DirectoryRebirth.
+ * A link element for Stagehand_DirectorySnap.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-class Stagehand_DirectoryRebirth_Element_Link extends Stagehand_DirectoryRebirth_Element
+class Stagehand_DirectorySnap_Element_Link extends Stagehand_DirectorySnap_Element
 {
 
     // {{{ properties

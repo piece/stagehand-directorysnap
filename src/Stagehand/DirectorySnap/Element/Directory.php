@@ -28,25 +28,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
- * @since      File available since Release 0.1.0
+ * @since      Directory available since Release 0.1.0
  */
 
-// {{{ Stagehand_DirectoryRebirth_Element_File
+// {{{ Stagehand_DirectorySnap_Element_Directory
 
 /**
- * A file element for Stagehand_DirectoryRebirth.
+ * A directory element for Stagehand_DirectorySnap.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-class Stagehand_DirectoryRebirth_Element_File extends Stagehand_DirectoryRebirth_Element
+class Stagehand_DirectorySnap_Element_Directory extends Stagehand_DirectorySnap_Element
 {
 
     // {{{ properties
@@ -54,18 +54,6 @@ class Stagehand_DirectoryRebirth_Element_File extends Stagehand_DirectoryRebirth
     /**#@+
      * @access public
      */
-
-    // }}}
-    // {{{ __construct()
-
-    /**
-     * @param string $path
-     */
-    public function __construct($path)
-    {
-        parent::__construct($path);
-        $this->value = file_get_contents($path);
-    }
 
     /**#@-*/
 
@@ -90,12 +78,7 @@ class Stagehand_DirectoryRebirth_Element_File extends Stagehand_DirectoryRebirth
 
     public function reproduce()
     {
-        $directoryPath = dirname($this->path);
-        if (!$directoryPath) {
-            mkdir($directoryPath, true);
-        }
-
-        file_put_contents($this->path, $this->value);
+        mkdir($this->path, 0777, true);
     }
 
     // }}}
@@ -106,13 +89,8 @@ class Stagehand_DirectoryRebirth_Element_File extends Stagehand_DirectoryRebirth
      */
     public function push($path)
     {
-        $filePath = $path . str_replace($this->rootPath, '', $this->path);
-        $directoryPath = dirname($filePath);
-        if (!$directoryPath) {
-            mkdir($directoryPath, true);
-        }
-
-        file_put_contents($filePath, $this->value);
+        $dirPath = $path . str_replace($this->rootPath, '', $this->path);
+        mkdir($dirPath, 0777, true);
     }
 
     /**#@-*/

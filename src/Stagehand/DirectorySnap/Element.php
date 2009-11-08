@@ -28,25 +28,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      File available since Release 0.1.0
  */
 
-// {{{ Stagehand_DirectoryRebirth
+// {{{ Stagehand_DirectorySnap_Element
 
 /**
- * Stagehand_DirectoryRebirth
+ * A element for Stagehand_DirectorySnap.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-class Stagehand_DirectoryRebirth
+abstract class Stagehand_DirectorySnap_Element
 {
 
     // {{{ properties
@@ -62,9 +62,8 @@ class Stagehand_DirectoryRebirth
      */
 
     protected $path;
-    protected $elements = array();
-    protected $temporaryPath;
-    protected $useTemporary = false;
+    protected $value;
+    protected $rootPath;
 
     /**#@-*/
 
@@ -79,114 +78,61 @@ class Stagehand_DirectoryRebirth
      */
 
     // }}}
-    // {{{ memorize()
+    // {{{ __construct()
 
     /**
      * @param string $path
      */
-    public function memorize($path)
+    public function __construct($path)
     {
         $this->path = $path;
+    }
 
-        if ($this->useTemporary) {
-            $callback = array($this, 'pushToTemporary');
-        } else {
-            $callback = array($this, 'collectElements');
-        }
+    // }}}
+    // {{{ setValue()
 
-        $scanner = new Stagehand_DirectoryScanner($callback, false);
-        $scanner->scan($this->path);
+    /**
+     * @param mixed $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    // }}}
+    // {{{ getValue()
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    // }}}
+    // {{{ setRoot()
+
+    /**
+     * @param string $path
+     */
+    public function setRoot($path)
+    {
+        $this->rootPath = $path;
     }
 
     // }}}
     // {{{ reproduce()
 
-    /**
-     * @throws Stagehand_DirectoryRebirth_Exception Memorize a directory first.
-     */
-    public function reproduce()
-    {
-        if (!$this->path) {
-            throw new Stagehand_DirectoryRebirth_Exception('Memorize a directory first.');
-        }
-
-        $cleaner = new Stagehand_DirectoryCleaner();
-        $cleaner->clean($this->path);
-        
-        if ($this->useTemporary) {
-            $scanner = new Stagehand_DirectoryScanner(array($this, 'reproduceOrigin'), false);
-            $scanner->scan($this->temporaryPath);
-        } else {
-            foreach ($this->elements as $element) {
-                $element->reproduce();
-            }
-        }
-    }
+    abstract public function reproduce();
 
     // }}}
-    // {{{ reserve()
+    // {{{ push()
 
     /**
-     * @throws Stagehand_DirectoryRebirth_Exception Memorize a directory first.
+     * @param string $path
      */
-    public function reserve()
-    {
-        if (!$this->path) {
-            throw new Stagehand_DirectoryRebirth_Exception('Memorize a directory first.');
-        }
-
-        register_shutdown_function(array($this, 'reproduce'));
-    }
-
-    // }}}
-    // {{{ useTemporary()
-
-    /**
-     * @param string $temporaryPath
-     */
-    public function useTemporary($temporaryPath)
-    {
-        $this->useTemporary = true;
-        $this->temporaryPath = $temporaryPath;
-    }
-
-    // }}}
-    // {{{ collectElements()
-
-    /**
-     * @param string $filePath
-     */
-    public function collectElements($filePath)
-    {
-        $this->elements[] =
-            Stagehand_DirectoryRebirth_Element_Factory::factory($filePath);
-    }
-
-    // }}}
-    // {{{ pushToTemporary()
-
-    /**
-     * @param string $filePath
-     */
-    public function pushToTemporary($filePath)
-    {
-        $element = Stagehand_DirectoryRebirth_Element_Factory::factory($filePath);
-        $element->setRoot($this->path);
-        $element->push($this->temporaryPath);
-    }
-
-    // }}}
-    // {{{ reproduceOrigin()
-
-    /**
-     * @param string $filePath
-     */
-    public function reproduceOrigin($filePath)
-    {
-        $element = Stagehand_DirectoryRebirth_Element_Factory::factory($filePath);
-        $element->setRoot($this->temporaryPath);
-        $element->push($this->path);
-    }
+    abstract public function push($path);
 
     /**#@-*/
 

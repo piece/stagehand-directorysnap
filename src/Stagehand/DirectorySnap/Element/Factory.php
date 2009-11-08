@@ -28,25 +28,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
- * @since      Directory available since Release 0.1.0
+ * @since      Link available since Release 0.1.0
  */
 
-// {{{ Stagehand_DirectoryRebirth_Element_Directory
+// {{{ Stagehand_DirectorySnap_Element_Factory
 
 /**
- * A directory element for Stagehand_DirectoryRebirth.
+ * A element factory.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-class Stagehand_DirectoryRebirth_Element_Directory extends Stagehand_DirectoryRebirth_Element
+class Stagehand_DirectorySnap_Element_Factory
 {
 
     // {{{ properties
@@ -73,24 +73,19 @@ class Stagehand_DirectoryRebirth_Element_Directory extends Stagehand_DirectoryRe
      * @access public
      */
 
-    // }}}
-    // {{{ reproduce()
-
-    public function reproduce()
+    public static function factory($path)
     {
-        mkdir($this->path, 0777, true);
-    }
+        $fileInfo = new SplFileInfo($path);
 
-    // }}}
-    // {{{ push()
+        if ($fileInfo->isDir()) {
+            $element = new Stagehand_DirectorySnap_Element_Directory($path);
+        } elseif ($fileInfo->isLink()) {
+            $element = new Stagehand_DirectorySnap_Element_Link($path);
+        } elseif ($fileInfo->isFile()) {
+            $element = new Stagehand_DirectorySnap_Element_File($path);
+        }
 
-    /**
-     * @param string $path
-     */
-    public function push($path)
-    {
-        $dirPath = $path . str_replace($this->rootPath, '', $this->path);
-        mkdir($dirPath, 0777, true);
+        return $element;
     }
 
     /**#@-*/

@@ -28,25 +28,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
- * @since      Link available since Release 0.1.0
+ * @since      File available since Release 0.1.0
  */
 
-// {{{ Stagehand_DirectoryRebirth_Element_Factory
+// {{{ Stagehand_DirectorySnap_Element_File
 
 /**
- * A element factory.
+ * A file element for Stagehand_DirectorySnap.
  *
- * @package    Stagehand_DirectoryRebirth
+ * @package    Stagehand_DirectorySnap
  * @copyright  2009 mbarracuda <mbarracuda@gmail.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License (revised)
  * @version    Release: @package_version@
  * @since      Class available since Release 0.1.0
  */
-class Stagehand_DirectoryRebirth_Element_Factory
+class Stagehand_DirectorySnap_Element_File extends Stagehand_DirectorySnap_Element
 {
 
     // {{{ properties
@@ -54,6 +54,18 @@ class Stagehand_DirectoryRebirth_Element_Factory
     /**#@+
      * @access public
      */
+
+    // }}}
+    // {{{ __construct()
+
+    /**
+     * @param string $path
+     */
+    public function __construct($path)
+    {
+        parent::__construct($path);
+        $this->value = file_get_contents($path);
+    }
 
     /**#@-*/
 
@@ -73,19 +85,34 @@ class Stagehand_DirectoryRebirth_Element_Factory
      * @access public
      */
 
-    public static function factory($path)
-    {
-        $fileInfo = new SplFileInfo($path);
+    // }}}
+    // {{{ reproduce()
 
-        if ($fileInfo->isDir()) {
-            $element = new Stagehand_DirectoryRebirth_Element_Directory($path);
-        } elseif ($fileInfo->isLink()) {
-            $element = new Stagehand_DirectoryRebirth_Element_Link($path);
-        } elseif ($fileInfo->isFile()) {
-            $element = new Stagehand_DirectoryRebirth_Element_File($path);
+    public function reproduce()
+    {
+        $directoryPath = dirname($this->path);
+        if (!$directoryPath) {
+            mkdir($directoryPath, true);
         }
 
-        return $element;
+        file_put_contents($this->path, $this->value);
+    }
+
+    // }}}
+    // {{{ push()
+
+    /**
+     * @param string $path
+     */
+    public function push($path)
+    {
+        $filePath = $path . str_replace($this->rootPath, '', $this->path);
+        $directoryPath = dirname($filePath);
+        if (!$directoryPath) {
+            mkdir($directoryPath, true);
+        }
+
+        file_put_contents($filePath, $this->value);
     }
 
     /**#@-*/
